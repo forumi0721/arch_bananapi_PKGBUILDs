@@ -1,0 +1,39 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+pkgname=("libump-bananapi-git")
+_gitname="libump-bananapi"
+pkgver=20140326.15.ec06806
+pkgrel=1
+pkgdesc="Unified Memory Provider userspace API source code needed for xf86-video-mali compilation"
+arch=("armv7h")
+url="https://github.com/LeMaker/libump/"
+license=("GPL")
+makedepends=("git")
+provides=("libump" "libump-git")
+conflicts=("libump" "libump-git")
+replaces=("libump" "libump-git")
+source=("${_gitname}::git+https://github.com/LeMaker/libump.git")
+md5sums=("SKIP")
+
+pkgver() {
+  cd "${srcdir}/${_gitname}"
+  echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}/${_gitname}"
+  autoreconf -i
+}
+
+build() {
+  cd "${srcdir}/${_gitname}"
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "${srcdir}/${_gitname}"
+  make DESTDIR="${pkgdir}/" install
+}
+
+# vim:set ts=2 sw=2 et:

@@ -1,0 +1,107 @@
+post_install() {
+	rm /usr/lib/libEGL.so
+	rm /usr/lib/libEGL.so.1
+	rm /usr/lib/libEGL.so.1.0.0
+	rm /usr/lib/libGLESv1_CM.so
+	rm /usr/lib/libGLESv1_CM.so.1
+	rm /usr/lib/libGLESv1_CM.so.1.1.0
+	rm /usr/lib/libGLESv2.so
+	rm /usr/lib/libGLESv2.so.2
+	rm /usr/lib/libGLESv2.so.2.0.0
+	ln -s libEGL.so.1 /usr/lib/libEGL.so
+	ln -s libEGL.so.1.4 /usr/lib/libEGL.so.1
+	ln -s libEGL.so.1.4 /usr/lib/libEGL.so.1.0.0
+	ln -s libMali.so /usr/lib/libEGL.so.1.4
+	ln -s libGLESv1_CM.so.1 /usr/lib/libGLESv1_CM.so
+	ln -s libGLESv1_CM.so.1.1 /usr/lib/libGLESv1_CM.so.1
+	ln -s libGLESv1_CM.so.1.1 /usr/lib/libGLESv1_CM.so.1.1.0
+	ln -s libMali.so /usr/lib/libGLESv1_CM.so.1.1
+	ln -s libGLESv2.so.2 /usr/lib/libGLESv2.so
+	ln -s libGLESv2.so.2.0 /usr/lib/libGLESv2.so.2
+	ln -s libGLESv2.so.2.0 /usr/lib/libGLESv2.so.2.0.0
+	ln -s libMali.so /usr/lib/libGLESv2.so.2.0
+
+	mv /usr/include/EGL/eglplatform.h /usr/include/EGL/eglplatform.h.mesa-libgl
+	mv /usr/include/EGL/egl.h /usr/include/EGL/egl.h.mesa-libgl
+	mv /usr/include/EGL/eglext.h /usr/include/EGL/eglext.h.mesa-libgl
+	mv /usr/include/KHR/khrplatform.h /usr/include/KHR/khrplatform.h.mesa-libgl
+	mv /usr/include/GLES2/gl2ext.h /usr/include/GLES2/gl2ext.h.mesa-libgl
+	mv /usr/include/GLES2/gl2platform.h /usr/include/GLES2/gl2platform.h.mesa-libgl
+	mv /usr/include/GLES2/gl2.h /usr/include/GLES2/gl2.h.mesa-libgl
+	mv /usr/include/GLES/gl.h /usr/include/GLES/gl.h.mesa-libgl
+	mv /usr/include/GLES/glext.h /usr/include/GLES/glext.h.mesa-libgl
+	mv /usr/include/GLES/glplatform.h /usr/include/GLES/glplatform.h.mesa-libgl
+	cp /usr/local/include/EGL/eglplatform.h /usr/include/EGL/eglplatform.h
+	cp /usr/local/include/EGL/egl.h /usr/include/EGL/egl.h
+	cp /usr/local/include/EGL/eglext.h /usr/include/EGL/eglext.h
+	cp /usr/local/include/KHR/khrplatform.h /usr/include/KHR/khrplatform.h
+	cp /usr/local/include/GLES2/gl2ext.h /usr/include/GLES2/gl2ext.h
+	cp /usr/local/include/GLES2/gl2platform.h /usr/include/GLES2/gl2platform.h
+	cp /usr/local/include/GLES2/gl2.h /usr/include/GLES2/gl2.h
+	cp /usr/local/include/GLES/gl.h /usr/include/GLES/gl.h
+	cp /usr/local/include/GLES/glext.h /usr/include/GLES/glext.h
+	cp /usr/local/include/GLES/glplatform.h /usr/include/GLES/glplatform.h
+}
+
+pre_upgrade() {
+	post_remove
+}
+
+post_upgrade() {
+	post_install
+}
+
+post_remove() {
+	rm /usr/lib/libEGL.so
+	rm /usr/lib/libEGL.so.1
+	rm /usr/lib/libEGL.so.1.0.0
+	rm /usr/lib/libEGL.so.1.4
+	rm /usr/lib/libGLESv1_CM.so
+	rm /usr/lib/libGLESv1_CM.so.1
+	rm /usr/lib/libGLESv1_CM.so.1.1.0
+	rm /usr/lib/libGLESv1_CM.so.1.1
+	rm /usr/lib/libGLESv2.so
+	rm /usr/lib/libGLESv2.so.2
+	rm /usr/lib/libGLESv2.so.2.0.0
+	rm /usr/lib/libGLESv2.so.2.0
+	ln -s libEGL.so.1.0.0 /usr/lib/libEGL.so
+	ln -s libEGL.so.1.0.0 /usr/lib/libEGL.so.1
+	ln -s /usr/lib/mesa/libEGL.so.1.0.0 /usr/lib/libEGL.so.1.0.0
+	ln -s libGLESv1_CM.so.1.1.0 /usr/lib/libGLESv1_CM.so
+	ln -s libGLESv1_CM.so.1.1.0 /usr/lib/libGLESv1_CM.so.1
+	ln -s /usr/lib/mesa/libGLESv1_CM.so.1.1.0 /usr/lib/libGLESv1_CM.so.1.1.0
+	ln -s libGLESv2.so.2.0.0 /usr/lib/libGLESv2.so
+	ln -s libGLESv2.so.2.0.0 /usr/lib/libGLESv2.so.2
+	ln -s /usr/lib/mesa/libGLESv2.so.2.0.0 /usr/lib/libGLESv2.so.2.0.0
+
+	if [ -e /usr/include/EGL/eglplatform.h.mesa-libgl ]; then
+		mv /usr/include/EGL/eglplatform.h.mesa-libgl /usr/include/EGL/eglplatform.h
+	fi
+	if [ -e /usr/include/EGL/egl.h.mesa-libgl ]; then
+		mv /usr/include/EGL/egl.h.mesa-libgl /usr/include/EGL/egl.h
+	fi
+	if [ -e /usr/include/EGL/eglext.h.mesa-libgl ]; then
+		mv /usr/include/EGL/eglext.h.mesa-libgl /usr/include/EGL/eglext.h
+	fi
+	if [ -e /usr/include/KHR/khrplatform.h.mesa-libgl ]; then
+		mv /usr/include/KHR/khrplatform.h.mesa-libgl /usr/include/KHR/khrplatform.h
+	fi
+	if [ -e /usr/include/GLES2/gl2ext.h.mesa-libgl ]; then
+		mv /usr/include/GLES2/gl2ext.h.mesa-libgl /usr/include/GLES2/gl2ext.h
+	fi
+	if [ -e /usr/include/GLES2/gl2platform.h.mesa-libgl ]; then
+		mv /usr/include/GLES2/gl2platform.h.mesa-libgl /usr/include/GLES2/gl2platform.h
+	fi
+	if [ -e /usr/include/GLES2/gl2.h.mesa-libgl ]; then
+		mv /usr/include/GLES2/gl2.h.mesa-libgl /usr/include/GLES2/gl2.h
+	fi
+	if [ -e /usr/include/GLES/gl.h.mesa-libgl ]; then
+		mv /usr/include/GLES/gl.h.mesa-libgl /usr/include/GLES/gl.h
+	fi
+	if [ -e /usr/include/GLES/glext.h.mesa-libgl ]; then
+		mv /usr/include/GLES/glext.h.mesa-libgl /usr/include/GLES/glext.h
+	fi
+	if [ -e /usr/include/GLES/glplatform.h.mesa-libgl ]; then
+		mv /usr/include/GLES/glplatform.h.mesa-libgl /usr/include/GLES/glplatform.h
+	fi
+}

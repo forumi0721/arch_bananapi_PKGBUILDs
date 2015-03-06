@@ -1,0 +1,49 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+pkgname=("sunxi-mali-bananapi-git")
+_gitname="sunxi-mali-bananapi"
+pkgver=20140326.30.d343311
+pkgrel=1
+pkgdesc="Sunxi Mali-400 support libraries."
+arch=("armv7h")
+url="https://github.com/LeMaker/sunxi-mali/"
+license=("GPL")
+makedepends=("git")
+depends=("mesa" "mesa-libgl=10.4.5-1" "libdri2" "libump")
+provides=("sunxi-mali" "sunxi-mali-git")
+conflicts=("sunxi-mali" "sunxi-mali-git")
+replaces=("sunxi-mali" "sunxi-mali-git")
+install="${pkgname}.install"
+source=("${_gitname}::git+https://github.com/LeMaker/sunxi-mali.git")
+md5sums=("SKIP")
+
+pkgver() {
+  cd "${srcdir}/${_gitname}"
+  echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "${srcdir}/${_gitname}"
+  sed -i 's#https://github.com/linux-sunxi/sunxi-mali-proprietary.git#https://github.com/LeMaker/sunxi-mali-proprietary.git#g' .gitmodules
+  git submodule init
+  git submodule update
+}
+
+build() {
+  cd "${srcdir}/${_gitname}"
+  make ABI=armhf
+}
+
+package() {
+  cd "${srcdir}/${_gitname}"
+  install -dm755 "${pkgdir}/usr/lib"
+  make DESTDIR="${pkgdir}/" install
+
+  rm "${pkgdir}/usr/lib/libEGL.so"*
+  rm "${pkgdir}/usr/lib/libGLESv1_CM.so"*
+  rm "${pkgdir}/usr/lib/libGLESv2.so"*
+  install -dm755 "${pkgdir}/usr/local"
+  mv "${pkgdir}/usr/include" "${pkgdir}/usr/local/include"
+}
+
+# vim:set ts=2 sw=2 et:

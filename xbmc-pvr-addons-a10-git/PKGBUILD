@@ -1,0 +1,35 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+pkgname=("xbmc-pvr-addons-a10-git")
+_gitname="xbmc-pvr-addons-a10"
+pkgver=20140713.532.271a23f
+pkgrel=1
+pkgdesc="XBMC PVR add-ons"
+arch=("armv7h")
+url="https://github.com/opdenkamp/xbmc-pvr-addons"
+license=("GPL2")
+depends=("xbmc-a10-bin")
+makedepends=("git" "boost")
+provides=("xbmc-pvr-addons" "kodi-pvr-addons")
+conflicts=("xbmc-pvr-addons" "kodi-pvr-addons")
+source=("${_gitname}::git+https://github.com/opdenkamp/xbmc-pvr-addons.git#branch=frodo")
+md5sums=("SKIP")
+
+pkgver() {
+  cd "${srcdir}/${_gitname}"
+  echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "${srcdir}/${_gitname}"
+  ./bootstrap
+  ./configure --prefix=/allwinner/xbmc-pvr-binhf/ --enable-addons-with-dependencies
+  make
+}
+
+package() {
+  cd "${srcdir}/${_gitname}"
+  make DESTDIR="${pkgdir}"/ install
+}
+
+# vim:set ts=2 sw=2 et:

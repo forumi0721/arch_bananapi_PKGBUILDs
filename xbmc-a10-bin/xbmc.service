@@ -1,0 +1,11 @@
+[Unit]
+Description = Starts instance of XBMC
+After = remote-fs.target
+
+[Service]
+Type = simple
+ExecStart = /allwinner/xbmc-pvr-binhf/bin/xbmc-standalone
+Restart = always
+
+[Install]
+WantedBy = multi-user.target

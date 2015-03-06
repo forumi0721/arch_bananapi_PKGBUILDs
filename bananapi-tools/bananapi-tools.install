@@ -1,0 +1,14 @@
+post_install() {
+	echo "To turn off LED on boot, please run the following command:"
+	echo " # systemctl enable bananapi-ledoff.service"
+}
+
+post_upgrade() {
+	if [ -e /etc/systemd/system/multi-user.target.wants/bananapi-ledoff.service ]; then
+		systemctl daemon-reload
+	fi
+}
+
+post_remove() {
+	rm -rf /etc/systemd/system/multi-user.target.wants/bananapi-ledoff.service
+}

@@ -1,0 +1,38 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+pkgname=("xf86-video-fbturbo-bananapi-git")
+_gitname="xf86-video-fbturbo-bananapi"
+pkgver=20140921.196.046a771
+pkgrel=1
+pkgdesc="X.org MALI video driver"
+arch=("armv7h")
+url="https://github.com/ssvb/xf86-video-fbturbo"
+license=("MIT")
+makedepends=("git" "xorg-server-devel")
+provides=("xf86-video-fbturbo")
+conflicts=("xf86-video-fbturbo" "xf86-video-fbturbo-git")
+options=("!libtool")
+source=("${_gitname}::git+https://github.com/ssvb/xf86-video-fbturbo")
+md5sums=("SKIP")
+
+pkgver() {
+  cd "${srcdir}/${_gitname}"
+  echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cd "${srcdir}/${_gitname}"
+  ./autogen.sh
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "${srcdir}/${_gitname}"
+  make DESTDIR="${pkgdir}/" install
+
+  install -dm755 "${pkgdir}/etc/X11/xorg.conf.d/"
+  install -Dm644 "${srcdir}/${_gitname}/xorg.conf" "${pkgdir}/etc/X11/xorg.conf.d/99-fbturbo.conf"
+}
+
+# vim:set ts=2 sw=2 et:
