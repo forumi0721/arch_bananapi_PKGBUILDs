@@ -2,7 +2,7 @@
 
 pkgname=("xf86-video-fbturbo-bananapi-git")
 _gitname="xf86-video-fbturbo-bananapi"
-pkgver=20140921.196.046a771
+pkgver=20150305.197.e094e3c
 pkgrel=1
 pkgdesc="X.org MALI video driver"
 arch=("armv7h")
