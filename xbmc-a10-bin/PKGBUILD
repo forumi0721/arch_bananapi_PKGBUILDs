@@ -2,15 +2,18 @@
 
 pkgname=("xbmc-a10-bin")
 pkgver=12.2
-pkgrel=2
+pkgrel=3
 pkgdesc="A software media player and entertainment hub for digital media"
 arch=("armv7h")
 url="http://blog.eldajani.net/banana-pi-arch-linux-customized-distribution/"
 license=("GPL2")
 depends=(
   "bluez-libs"
+  "freetype2"
+  "fribidi"
   "jasper"
   "java-runtime"
+  "libcdio"
   "libmariadbclient"
   "libmicrohttpd"
   "libmpeg2"
