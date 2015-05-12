@@ -3,12 +3,13 @@
 _localpkgver=Y
 pkgbase="BananaPi"
 pkgname=("uboot-bananapi" "linux-bananapi" "linux-bananapi-headers")
-_kernelversion=3.4.105
-pkgver=3.4.105.20150305.1
+_kernelversion=3.4.107
+pkgver=3.4.107.20150512.1
 pkgrel=1
 arch=("armv7h")
 url="https://github.com/LeMaker/lemaker-bsp"
 license=("GPL")
+makedepends=("sunxi-tools")
 options=("!strip" "libtool" "staticlibs")
 source=(
   "BananaPi_hwpack.tar.xz"

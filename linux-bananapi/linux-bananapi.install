@@ -1,7 +1,7 @@
 # arg 1:  the new package version
 # arg 2:  the old package version
 
-KERNEL_VERSION=3.4.105
+KERNEL_VERSION=3.4.107
 
 post_install () {
   # updating module dependencies
