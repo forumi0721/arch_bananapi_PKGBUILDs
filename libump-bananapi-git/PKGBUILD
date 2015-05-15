@@ -16,24 +16,22 @@ source=("${_gitname}::git+https://github.com/LeMaker/libump.git")
 md5sums=("SKIP")
 
 pkgver() {
-  cd "${srcdir}/${_gitname}"
-  echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+	cd "${srcdir}/${_gitname}"
+	echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
 }
 
 prepare() {
-  cd "${srcdir}/${_gitname}"
-  autoreconf -i
+	cd "${srcdir}/${_gitname}"
+	autoreconf -i
 }
 
 build() {
-  cd "${srcdir}/${_gitname}"
-  ./configure --prefix=/usr
-  make
+	cd "${srcdir}/${_gitname}"
+	./configure --prefix=/usr
+	make
 }
 
 package() {
-  cd "${srcdir}/${_gitname}"
-  make DESTDIR="${pkgdir}/" install
+	cd "${srcdir}/${_gitname}"
+	make DESTDIR="${pkgdir}/" install
 }
-
-# vim:set ts=2 sw=2 et:

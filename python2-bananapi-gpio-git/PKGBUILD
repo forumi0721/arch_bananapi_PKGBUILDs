@@ -17,18 +17,16 @@ source=("${_gitname}::git+https://github.com/LeMaker/RPi.GPIO_BP.git")
 md5sums=("SKIP")
 
 pkgver() {
-  cd "${srcdir}/${_gitname}"
-  echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+	cd "${srcdir}/${_gitname}"
+	echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
 }
 
 build() {
-  cd "${srcdir}/${_gitname}"
-  python2 setup.py build
+	cd "${srcdir}/${_gitname}"
+	python2 setup.py build
 }
 
 package() {
-  cd "${srcdir}/${_gitname}"
-  python2 setup.py install --prefix=/usr --root="${pkgdir}/" --optimize=1
+	cd "${srcdir}/${_gitname}"
+	python2 setup.py install --prefix=/usr --root="${pkgdir}/" --optimize=1
 }
-
-# vim:set ts=2 sw=2 et:

@@ -13,32 +13,30 @@ provides=("libvdpau-sunxi" "libvdpau-sunxi-git")
 conflicts=("libvdpau-sunxi" "libvdpau-sunxi-git")
 replace=("libvdpau-sunxi" "libvdpau-sunxi-git")
 source=(
-  "${_gitname}::git+https://github.com/LeMaker/libvdpau-sunxi.git"
-  "${pkgname}.tar.xz"
+	"${_gitname}::git+https://github.com/LeMaker/libvdpau-sunxi.git"
+	"${pkgname}.tar.xz"
 )
 md5sums=(
-  "SKIP"
-  "afc57200c8337ae6f7b12eea17b7ea82"
+	"SKIP"
+	"afc57200c8337ae6f7b12eea17b7ea82"
 )
 
 pkgver() {
-  cd "${srcdir}/${_gitname}"
-  echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+	cd "${srcdir}/${_gitname}"
+	echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
 }
 
 build() {
-  cd "${srcdir}/${_gitname}"
-  make
+	cd "${srcdir}/${_gitname}"
+	make
 }
 
 package() {
-  cd "${srcdir}/${_gitname}"
-  make DESTDIR="${pkgdir}/" install
+	cd "${srcdir}/${_gitname}"
+	make DESTDIR="${pkgdir}/" install
 
-  ln -s libvdpau_sunxi.so.1 "${pkgdir}/usr/lib/vdpau/libvdpau_sunxi.so"
+	ln -s libvdpau_sunxi.so.1 "${pkgdir}/usr/lib/vdpau/libvdpau_sunxi.so"
 
-  install -dm755 "${pkgdir}/etc/profile.d"
-  install -Dm755 "${srcdir}/${pkgname}/vdpau.sh" "${pkgdir}/etc/profile.d/"
+	install -dm755 "${pkgdir}/etc/profile.d"
+	install -Dm755 "${srcdir}/${pkgname}/vdpau.sh" "${pkgdir}/etc/profile.d/"
 }
-
-# vim:set ts=2 sw=2 et:

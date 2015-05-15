@@ -1,0 +1,5 @@
+#!/bin/sh
+
+OWNER="Y"
+SOURCETYPE="local"
+

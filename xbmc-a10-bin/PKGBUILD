@@ -1,7 +1,5 @@
 # Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
 
-_localpkgbuild=Y
-
 pkgname=("xbmc-a10-bin")
 pkgver=12.2
 pkgrel=3
@@ -10,68 +8,66 @@ arch=("armv7h")
 url="http://blog.eldajani.net/banana-pi-arch-linux-customized-distribution/"
 license=("GPL2")
 depends=(
-  "bluez-libs"
-  "freetype2"
-  "fribidi"
-  "jasper"
-  "java-runtime"
-  "libcdio"
-  "libmariadbclient"
-  "libmicrohttpd"
-  "libmpeg2"
-  "libsamplerate"
-  "libssh"
-  "libump"
-  "libva"
-  "libvdpau"
-  "sdl_image"
-  "smbclient"
-  "tinyxml"
-  "unzip"
-  "yajl"
+	"bluez-libs"
+	"freetype2"
+	"fribidi"
+	"jasper"
+	"java-runtime"
+	"libcdio"
+	"libmariadbclient"
+	"libmicrohttpd"
+	"libmpeg2"
+	"libsamplerate"
+	"libssh"
+	"libump"
+	"libva"
+	"libvdpau"
+	"sdl_image"
+	"smbclient"
+	"tinyxml"
+	"unzip"
+	"yajl"
 )
 provides=("xbmc" "kodi")
 conflicts=("xbmc" "xbmc-git" "xbmc-eden-git" "xbmc-git-xvba" "kodi" "kodi-git")
 options=("!strip" "!ccache" "!distcc")
 install="${pkgname}.install"
 source=(
-  "xbmc-a10-bin.tar.xz"
-  "xbmc.service"
-  "xbmc-a10.sh"
+	"xbmc-a10-bin.tar.xz"
+	"xbmc.service"
+	"xbmc-a10.sh"
 )
 md5sums=(
-  "SKIP"
-  "SKIP"
-  "SKIP"
+	"SKIP"
+	"SKIP"
+	"SKIP"
 )
 
 package() {
-  cp -ar "${srcdir}/allwinner" "${pkgdir}/"
-  chmod 4755 "${pkgdir}/allwinner/xbmc-pvr-binhf/bin/xbmc"
-  chmod 4755 "${pkgdir}/allwinner/xbmc-pvr-binhf/bin/xbmc-standalone"
-  chmod 4755 "${pkgdir}/allwinner/xbmc-pvr-binhf/lib/xbmc/xbmc.bin"
+	cp -ar "${srcdir}/allwinner" "${pkgdir}/"
+	chmod 4755 "${pkgdir}/allwinner/xbmc-pvr-binhf/bin/xbmc"
+	chmod 4755 "${pkgdir}/allwinner/xbmc-pvr-binhf/bin/xbmc-standalone"
+	chmod 4755 "${pkgdir}/allwinner/xbmc-pvr-binhf/lib/xbmc/xbmc.bin"
 
-  install -dm755 "${pkgdir}/usr/bin"
-  ln -s "../../allwinner/xbmc-pvr-binhf/bin/xbmc" "${pkgdir}/usr/bin/xbmc"
-  ln -s "../../allwinner/xbmc-pvr-binhf/bin/xbmc-standalone" "${pkgdir}/usr/bin/xbmc-standalone"
-  install -dm755 "${pkgdir}/usr/share/xsessions"
-  ln -s "../../../allwinner/xbmc-pvr-binhf/share/xsessions/XBMC.desktop" "${pkgdir}/usr/share/xsessions/XBMC.desktop"
-  install -dm755 "${pkgdir}/usr/share/doc/xbmc"
-  ln -s "../../../../allwinner/xbmc-pvr-binhf/share/doc/xbmc/LICENSE.GPL" "${pkgdir}/usr/share/doc/xbmc/LICENSE.GPL"
-  ln -s "../../../../allwinner/xbmc-pvr-binhf/share/doc/xbmc/copying.txt" "${pkgdir}/usr/share/doc/xbmc/copying.txt"
-  ln -s "../../../../allwinner/xbmc-pvr-binhf/share/doc/xbmc/README.linux" "${pkgdir}/usr/share/doc/xbmc/README.linux"
-  install -dm755 "${pkgdir}/usr/share/applications"
-  ln -s "../../../../allwinner/xbmc-pvr-binhf/share/applications/xbmc.desktop" "${pkgdir}/usr/share/applications/xbmc.desktop"
-  install -dm755 "${pkgdir}/usr/share/icons/hicolor/48x48/apps"
-  ln -s "../../../../../allwinner/xbmc-pvr-binhf/share/icons/hicolor/48x48/apps/xbmc.png" "${pkgdir}/usr/share/icons/hicolor/48x48/apps/xbmc.png"
-  install -dm755 "${pkgdir}/usr/share/icons/hicolor/256x256/apps"
-  ln -s "../../../../../allwinner/xbmc-pvr-binhf/share/icons/hicolor/256x256/apps/xbmc.png" "${pkgdir}/usr/share/icons/hicolor/256x256/apps/xbmc.png"
+	install -dm755 "${pkgdir}/usr/bin"
+	ln -s "../../allwinner/xbmc-pvr-binhf/bin/xbmc" "${pkgdir}/usr/bin/xbmc"
+	ln -s "../../allwinner/xbmc-pvr-binhf/bin/xbmc-standalone" "${pkgdir}/usr/bin/xbmc-standalone"
+	install -dm755 "${pkgdir}/usr/share/xsessions"
+	ln -s "../../../allwinner/xbmc-pvr-binhf/share/xsessions/XBMC.desktop" "${pkgdir}/usr/share/xsessions/XBMC.desktop"
+	install -dm755 "${pkgdir}/usr/share/doc/xbmc"
+	ln -s "../../../../allwinner/xbmc-pvr-binhf/share/doc/xbmc/LICENSE.GPL" "${pkgdir}/usr/share/doc/xbmc/LICENSE.GPL"
+	ln -s "../../../../allwinner/xbmc-pvr-binhf/share/doc/xbmc/copying.txt" "${pkgdir}/usr/share/doc/xbmc/copying.txt"
+	ln -s "../../../../allwinner/xbmc-pvr-binhf/share/doc/xbmc/README.linux" "${pkgdir}/usr/share/doc/xbmc/README.linux"
+	install -dm755 "${pkgdir}/usr/share/applications"
+	ln -s "../../../../allwinner/xbmc-pvr-binhf/share/applications/xbmc.desktop" "${pkgdir}/usr/share/applications/xbmc.desktop"
+	install -dm755 "${pkgdir}/usr/share/icons/hicolor/48x48/apps"
+	ln -s "../../../../../allwinner/xbmc-pvr-binhf/share/icons/hicolor/48x48/apps/xbmc.png" "${pkgdir}/usr/share/icons/hicolor/48x48/apps/xbmc.png"
+	install -dm755 "${pkgdir}/usr/share/icons/hicolor/256x256/apps"
+	ln -s "../../../../../allwinner/xbmc-pvr-binhf/share/icons/hicolor/256x256/apps/xbmc.png" "${pkgdir}/usr/share/icons/hicolor/256x256/apps/xbmc.png"
 
-  install -dm755 "${pkgdir}/usr/lib/systemd/system"
-  install -Dm644 "${srcdir}/xbmc.service" "${pkgdir}/usr/lib/systemd/system/"
+	install -dm755 "${pkgdir}/usr/lib/systemd/system"
+	install -Dm644 "${srcdir}/xbmc.service" "${pkgdir}/usr/lib/systemd/system/"
 
-  install -dm755 "${pkgdir}/etc/profile.d"
-  install -Dm755 "${srcdir}/xbmc-a10.sh" "${pkgdir}/etc/profile.d/"
+	install -dm755 "${pkgdir}/etc/profile.d"
+	install -Dm755 "${srcdir}/xbmc-a10.sh" "${pkgdir}/etc/profile.d/"
 }
-
-# vim:set ts=2 sw=2 et:

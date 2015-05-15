@@ -1,7 +1,5 @@
 # Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
 
-_localpkgbuild=Y
-
 pkgname=("wt-rpm")
 pkgver=0.1
 pkgrel=1
@@ -13,37 +11,35 @@ depends=("wt" "wiringpi" "boost-libs" "liboping")
 makedepends=("wt" "wiringpi" "boost" "cmake" "liboping")
 install="${pkgname}.install"
 source=(
-  "${pkgname}.tar.xz"
-  "${pkgname}.json"
+	"${pkgname}.tar.xz"
+	"${pkgname}.json"
 )
 md5sums=(
-  "SKIP"
-  "SKIP"
+	"SKIP"
+	"SKIP"
 )
 
 build() {
-  cd "${srcdir}/${pkgname}"
-  mkdir -p build
-  cd build
-  cmake .. -DCMAKE_INSTALL_PREFIX="${pkgdir}/usr" -DUSE_CON_HTTP=ON -USE_RASPRPM=ON -DUSE_DUMMY_RPM=ON -DUSE_PING=ON
-  make
+	cd "${srcdir}/${pkgname}"
+	mkdir -p build
+	cd build
+	cmake .. -DCMAKE_INSTALL_PREFIX="${pkgdir}/usr" -DUSE_CON_HTTP=ON -USE_RASPRPM=ON -DUSE_DUMMY_RPM=ON -DUSE_PING=ON
+	make
 }
 
 package() {
-  cd "${srcdir}/${pkgname}/build"
-  make install
+	cd "${srcdir}/${pkgname}/build"
+	make install
 
-  install -dm755 "${pkgdir}/usr/share/wtrpm"
-  install -Dm644 "${srcdir}/${pkgname}/imgs/ping.png" "${pkgdir}/usr/share/wtrpm/"
-  install -Dm644 "${srcdir}/${pkgname}/imgs/green_light.png" "${pkgdir}/usr/share/wtrpm/"
-  install -Dm644 "${srcdir}/${pkgname}/imgs/off_light.png" "${pkgdir}/usr/share/wtrpm/"
-  install -Dm644 "${srcdir}/${pkgname}/imgs/power-button.png" "${pkgdir}/usr/share/wtrpm/"
+	install -dm755 "${pkgdir}/usr/share/wtrpm"
+	install -Dm644 "${srcdir}/${pkgname}/imgs/ping.png" "${pkgdir}/usr/share/wtrpm/"
+	install -Dm644 "${srcdir}/${pkgname}/imgs/green_light.png" "${pkgdir}/usr/share/wtrpm/"
+	install -Dm644 "${srcdir}/${pkgname}/imgs/off_light.png" "${pkgdir}/usr/share/wtrpm/"
+	install -Dm644 "${srcdir}/${pkgname}/imgs/power-button.png" "${pkgdir}/usr/share/wtrpm/"
 
-  install -dm755 "${pkgdir}/usr/lib/systemd/system"
-  install -Dm644 "${srcdir}/${pkgname}/systemd/wtrpm.service" "${pkgdir}/usr/lib/systemd/system/"
+	install -dm755 "${pkgdir}/usr/lib/systemd/system"
+	install -Dm644 "${srcdir}/${pkgname}/systemd/wtrpm.service" "${pkgdir}/usr/lib/systemd/system/"
 
-  install -dm755 "${pkgdir}/etc"
-  install -Dm644 "${srcdir}/wt-rpm.json" "${pkgdir}/etc/"
+	install -dm755 "${pkgdir}/etc"
+	install -Dm644 "${srcdir}/wt-rpm.json" "${pkgdir}/etc/"
 }
-
-# vim:set ts=2 sw=2 et:
