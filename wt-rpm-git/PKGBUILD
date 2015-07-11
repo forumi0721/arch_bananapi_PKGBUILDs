@@ -1,0 +1,52 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+pkgname=("wt-rpm-git")
+_gitname=("wt-rpm")
+pkgver=20150712.42.9267cc5
+pkgrel=1
+pkgdesc="Remote Power Managemant"
+arch=("armv6h" "armv7h")
+url="http://www.mupuf.org/blog/2013/05/11/wtrpm-a-web-based-wt-suite-to-power-up-slash-down-your-computers/"
+license=("GPL")
+depends=("wt" "wiringpi" "boost-libs" "liboping")
+makedepends=("wt" "wiringpi" "boost" "cmake" "liboping")
+install="${pkgname}.install"
+source=(
+	"${_gitname}::git+https://github.com/forumi0721/wt-rpm.git"
+	"wt-rpm.json"
+)
+md5sums=(
+	"SKIP"
+	"SKIP"
+)
+
+pkgver() {
+	cd "${srcdir}/${_gitname}"
+	echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+}
+
+
+build() {
+	cd "${srcdir}/${_gitname}"
+	mkdir -p build
+	cd build
+	cmake .. -DCMAKE_INSTALL_PREFIX="${pkgdir}/usr" -DUSE_CON_HTTP=ON -USE_RASPRPM=ON -DUSE_DUMMY_RPM=ON -DUSE_PING=ON
+	make
+}
+
+package() {
+	cd "${srcdir}/${_gitname}/build"
+	make install
+
+	install -dm755 "${pkgdir}/usr/share/wt-rpm"
+	install -Dm644 "${srcdir}/${_gitname}/imgs/ping.png" "${pkgdir}/usr/share/wt-rpm/"
+	install -Dm644 "${srcdir}/${_gitname}/imgs/green_light.png" "${pkgdir}/usr/share/wt-rpm/"
+	install -Dm644 "${srcdir}/${_gitname}/imgs/off_light.png" "${pkgdir}/usr/share/wt-rpm/"
+	install -Dm644 "${srcdir}/${_gitname}/imgs/power-button.png" "${pkgdir}/usr/share/wt-rpm/"
+
+	install -dm755 "${pkgdir}/usr/lib/systemd/system"
+	install -Dm644 "${srcdir}/${_gitname}/systemd/wt-rpm.service" "${pkgdir}/usr/lib/systemd/system/"
+
+	install -dm755 "${pkgdir}/etc"
+	install -Dm644 "${srcdir}/wt-rpm.json" "${pkgdir}/etc/"
+}
