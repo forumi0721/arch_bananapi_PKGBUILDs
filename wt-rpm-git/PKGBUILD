@@ -2,7 +2,7 @@
 
 pkgname=("wt-rpm-git")
 _gitname=("wt-rpm")
-pkgver=20150712.42.9267cc5
+pkgver=20150712.44.6e9e3f5
 pkgrel=1
 pkgdesc="Remote Power Managemant"
 arch=("armv6h" "armv7h")
