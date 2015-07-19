@@ -2,7 +2,7 @@
 
 pkgname=("wt-rpm-git")
 _gitname=("wt-rpm")
-pkgver=20150712.44.6e9e3f5
+pkgver=20150719.45.61f67b6
 pkgrel=1
 pkgdesc="Remote Power Managemant"
 arch=("armv6h" "armv7h")
@@ -13,10 +13,8 @@ makedepends=("wt" "wiringpi" "boost" "cmake" "liboping")
 install="${pkgname}.install"
 source=(
 	"${_gitname}::git+https://github.com/forumi0721/wt-rpm.git"
-	"wt-rpm.json"
 )
 md5sums=(
-	"SKIP"
 	"SKIP"
 )
 
@@ -48,5 +46,5 @@ package() {
 	install -Dm644 "${srcdir}/${_gitname}/systemd/wt-rpm.service" "${pkgdir}/usr/lib/systemd/system/"
 
 	install -dm755 "${pkgdir}/etc"
-	install -Dm644 "${srcdir}/wt-rpm.json" "${pkgdir}/etc/"
+	install -Dm644 "${srcdir}/${_gitname}/etc/wt-rpm.json" "${pkgdir}/etc/"
 }
