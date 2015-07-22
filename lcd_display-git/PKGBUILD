@@ -1,0 +1,38 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+pkgname=("lcd_display-git")
+_gitname=("lcd_display")
+pkgver=20150723.5.c9bed0d
+pkgrel=1
+pkgdesc="Banana Pi LCD Project"
+arch=("armv6h" "armv7h")
+url="https://github.com/forumi0721/bananapi_LCD_Display"
+license=("GPL")
+depends=("wiringpi")
+install="${pkgname}.install"
+source=(
+	"${_gitname}::git+https://github.com/forumi0721/bananapi_LCD_Display.git"
+)
+md5sums=(
+	"SKIP"
+)
+
+pkgver() {
+	cd "${srcdir}/${_gitname}"
+	echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+}
+
+
+build() {
+	cd "${srcdir}/${_gitname}"
+	make
+}
+
+package() {
+	install -dm755 "${pkgdir}/usr/bin"
+	install -Dm755 "${srcdir}/${_gitname}/lcd_display" "${pkgdir}/usr/bin/"
+	install -Dm755 "${srcdir}/${_gitname}/lcd_display-daemon.sh" "${pkgdir}/usr/bin/"
+
+	install -dm755 "${pkgdir}/usr/lib/systemd/system"
+	install -Dm644 "${srcdir}/${_gitname}/lcd_display.service" "${pkgdir}/usr/lib/systemd/system/"
+}
