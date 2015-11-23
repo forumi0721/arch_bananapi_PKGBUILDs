@@ -14,6 +14,9 @@ post_install() {
 	echo_green "To configure a service to be automatically started at boot time, use the systemctl command in the following form:"
 	echo_red   " # systemctl enable wt-rpm.service"
 	echo
+	echo_green "To configure a service in nginx proxy pass, use the config file in /etc/nginx/conf.d/wt-rpm-git.nginx.conf"
+	echo_red   " # cp /etc/nginx/conf.d/wt-rpm-git.nginx.conf.sample /etc/nginx/conf.d/wt-rpm-git.nginx.conf"
+	echo
 }
 
 post_upgrade() {

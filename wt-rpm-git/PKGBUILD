@@ -2,7 +2,7 @@
 
 pkgname=("wt-rpm-git")
 _gitname=("wt-rpm")
-pkgver=20150719.45.61f67b6
+pkgver=20151123.46.d3882bb
 pkgrel=1
 pkgdesc="Remote Power Managemant"
 arch=("armv6h" "armv7h")
@@ -47,4 +47,7 @@ package() {
 
 	install -dm755 "${pkgdir}/etc"
 	install -Dm644 "${srcdir}/${_gitname}/etc/wt-rpm.json" "${pkgdir}/etc/"
+
+	install -dm755 "${pkgdir}/etc/nginx/conf.d"
+	install -Dm644 "${srcdir}/${_gitname}/etc/nginx/conf.d/wt-rpm.nginx.conf.sample" "${pkgdir}/etc/nginx/conf.d/"
 }
