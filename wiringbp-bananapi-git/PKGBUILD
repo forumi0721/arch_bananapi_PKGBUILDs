@@ -2,7 +2,7 @@
 
 pkgname=("wiringbp-bananapi-git")
 _gitname="wiringbp-bananapi"
-pkgver=20150219.6.4f358a3
+pkgver=20151120.9.2312341
 pkgrel=1
 pkgdesc="WiringBP: An implementation of most of the Arduino Wiring functions for the Banana Pi"
 arch=("armv7h")
