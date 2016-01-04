@@ -2,8 +2,8 @@
 
 pkgbase="BananaPi"
 pkgname=("uboot-bananapi" "linux-bananapi" "linux-bananapi-headers")
-_kernelversion=3.4.109
-pkgver=3.4.109.20151005.1
+_kernelversion=3.4.110
+pkgver=3.4.110.20160104.1
 pkgrel=1
 arch=("armv7h")
 url="https://github.com/LeMaker/lemaker-bsp"
