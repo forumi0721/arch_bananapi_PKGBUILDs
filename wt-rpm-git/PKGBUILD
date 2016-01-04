@@ -3,7 +3,7 @@
 pkgname=("wt-rpm-git")
 _gitname=("wt-rpm")
 pkgver=20151123.46.d3882bb
-pkgrel=1
+pkgrel=2
 pkgdesc="Remote Power Managemant"
 arch=("armv6h" "armv7h")
 url="http://www.mupuf.org/blog/2013/05/11/wtrpm-a-web-based-wt-suite-to-power-up-slash-down-your-computers/"
