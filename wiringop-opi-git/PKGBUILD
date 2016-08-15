@@ -1,0 +1,49 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+pkgname=("wiringbp-opi-git")
+_gitname="wiringbp-opi"
+pkgver=20160407.24.f2949d3
+pkgrel=1
+pkgdesc="WiringOP: An implementation of most of the Arduino Wiring functions for the OrangePi"
+arch=("armv7h")
+url="https://github.com/LeMaker/WiringBP/"
+license=("LGPL")
+makedepends=("git")
+provides=("wiringpi") 
+conflicts=("wiringpi")
+source=("${_gitname}::git+https://github.com/zhaolei/WiringOP#branch=h3")
+md5sums=("SKIP")
+
+pkgver() {
+	cd "${srcdir}/${_gitname}"
+	echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+	cd "${srcdir}/${_gitname}"
+	sed -i "s|/usr/local/bin/gpio|/usr/bin/gpio|" wiringPi/wiringPi.c
+}
+
+build() {
+	cd "${srcdir}/${_gitname}"
+	make -C wiringPi all static
+	make -C devLib all static INCLUDE+="-I${srcdir}/${_gitname}/wiringPi" LDFLAGS+="-L${srcdir}/${_gitname}/wiringPi"
+	make -C gpio INCLUDE+="-I${srcdir}/${_gitname}/wiringPi -I${srcdir}/${_gitname}/devLib" LDFLAGS+="-L${srcdir}/${_gitname}/wiringPi -L${srcdir}/${_gitname}/devLib"
+}
+
+package() {
+	install -dm755 "${pkgdir}/usr/include"
+	install -Dm644 "${srcdir}/${_gitname}/wiringPi/"*.h "${pkgdir}/usr/include/"
+	install -dm755 "${pkgdir}/usr/lib"
+	install -Dm644 "${srcdir}/${_gitname}/wiringPi/libwiringPi."{a,so*} "${pkgdir}/usr/lib/"
+	
+	install -dm755 "${pkgdir}/usr/include"
+	install -Dm644 "${srcdir}/${_gitname}/devLib/"*.h "${pkgdir}/usr/include/"
+	install -dm755 "${pkgdir}/usr/lib"
+	install -Dm644 "${srcdir}/${_gitname}/devLib/libwiringPiDev."{a,so*} "${pkgdir}/usr/lib/"
+	
+	install -dm755 "${pkgdir}/usr/bin"
+	install -Dm4755 "${srcdir}/${_gitname}/gpio/gpio" "${pkgdir}/usr/bin/"
+	install -dm755 "${pkgdir}/usr/share/man/man1"
+	install -Dm644 "${srcdir}/${_gitname}/gpio/gpio.1" "${pkgdir}/usr/share/man/man1/"
+}

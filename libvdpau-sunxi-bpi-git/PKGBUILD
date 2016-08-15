@@ -1,7 +1,7 @@
 # Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
 
-pkgname=("libvdpau-sunxi-bananapi-git")
-_gitname="libvdpau-sunxi-bananapi"
+pkgname=("libvdpau-sunxi-bpi-git")
+_gitname="libvdpau-sunxi-bpi"
 pkgver=20140727.49.e4e3ef3
 pkgrel=1
 pkgdesc="Experimental VDPAU for Allwinner sunxi SoCs (WiP)"
@@ -18,7 +18,7 @@ source=(
 )
 md5sums=(
 	"SKIP"
-	"afc57200c8337ae6f7b12eea17b7ea82"
+	"SKIP"
 )
 
 pkgver() {

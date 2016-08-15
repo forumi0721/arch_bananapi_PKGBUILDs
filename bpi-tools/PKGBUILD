@@ -1,0 +1,29 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+pkgname=("bpi-tools")
+pkgver=0.1
+pkgrel=1
+pkgdesc="Simple tools to control the BananaPi"
+arch=("armv7h")
+url="http://localhost/"
+license=("custom")
+install="${pkgname}.install"
+source=("${pkgname}.tar.xz")
+md5sums=("SKIP")
+
+build() {
+	cd "${srcdir}/${pkgname}"
+	gcc a10_display.c -o a10_display -O2 --static
+	gcc bpi_ledset.c -o bpi_ledset -O2 --static
+}
+
+package() {
+	install -dm755 "${pkgdir}/usr/bin"
+	install -Dm4755 "${srcdir}/${pkgname}/a10_display" "${pkgdir}/usr/bin/"
+	install -Dm4755 "${srcdir}/${pkgname}/bpi_ledset" "${pkgdir}/usr/bin/"
+	install -Dm4755 "${srcdir}/${pkgname}/ledoff" "${pkgdir}/usr/bin/"
+	install -Dm4755 "${srcdir}/${pkgname}/ledon" "${pkgdir}/usr/bin/"
+
+	install -dm755 "${pkgdir}/usr/lib/systemd/system"
+	install -Dm644 "${srcdir}/${pkgname}/bpi-ledoff.service" "${pkgdir}/usr/lib/systemd/system/"
+}

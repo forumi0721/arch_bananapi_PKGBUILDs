@@ -1,0 +1,62 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+pkgname=("sunxi-mali-bpi-git")
+_gitname="sunxi-mali-bpi"
+pkgver=20140326.30.d343311
+pkgrel=2
+pkgdesc="Sunxi Mali-400 support libraries."
+arch=("armv7h")
+url="https://github.com/LeMaker/sunxi-mali/"
+license=("GPL")
+makedepends=("git")
+depends=("libdri2" "libump")
+provides=("sunxi-mali" "sunxi-mali-git")
+conflicts=("sunxi-mali" "sunxi-mali-git")
+replaces=("sunxi-mali" "sunxi-mali-git")
+source=(
+	"${_gitname}::git+https://github.com/LeMaker/sunxi-mali.git"
+	"headers.tar.xz"
+	"mali.conf"
+)
+md5sums=(
+	"SKIP"
+	"26ad05dcffbff0cc1bae0e4fa6da84cb"
+	"4cf3405324ad2e47faa99c7d3cb6c735"
+)
+
+pkgver() {
+	cd "${srcdir}/${_gitname}"
+	echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+	cd "${srcdir}/${_gitname}"
+	sed -i 's#https://github.com/linux-sunxi/sunxi-mali-proprietary.git#https://github.com/LeMaker/sunxi-mali-proprietary.git#g' .gitmodules
+	git submodule init
+	git submodule update
+}
+
+build() {
+	cd "${srcdir}/${_gitname}"
+	make config VERSION=r3p0 ABI=armhf EGL_TYPE=x11
+	make prefix=/usr/
+}
+
+package() {
+	cd "${srcdir}/${_gitname}"
+
+	install -dm755 "${pkgdir}/usr/lib/mali"
+	make -C lib/mali DESTDIR="${pkgdir}" prefix=/usr/ libdir='$(DESTDIR)$(prefix)/lib/mali/' install
+
+	install -dm755 "${pkgdir}/etc/ld.so.conf.d/"
+	install -Dm644 "${srcdir}/mali.conf" "${pkgdir}/etc/ld.so.conf.d/"
+
+	install -dm755 "${pkgdir}/usr/local/include"
+	make -C include DESTDIR="${pkgdir}" prefix=/usr/local/ install_egl install_gles install_gles2 install_khr
+
+	install -dm755 "${pkgdir}/usr/local/include/GLES2"
+	rm -rf "${pkgdir}/usr/local/include/GLES2/gl2.h"
+	rm -rf "${pkgdir}/usr/local/include/GLES2/gl2ext.h"
+	install -Dm755 "${srcdir}/headers/gl2.h" "${pkgdir}/usr/local/include/GLES2/"
+	install -Dm755 "${srcdir}/headers/gl2ext.h" "${pkgdir}/usr/local/include/GLES2/"
+}

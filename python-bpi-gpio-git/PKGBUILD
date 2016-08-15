@@ -1,0 +1,41 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+pkgname=("python-bpi-gpio-git" "python2-bpi-gpio-git")
+_gitname="python-bpi-gpio"
+pkgver=20160227.11.7a5d9c8
+pkgrel=1
+pkgdesc="Python library for GPIO access on a BananaPi"
+arch=("armv7h")
+url="https://github.com/LeMaker/RPi.GPIO_BP/"
+license=("GPLv2")
+source=("${_gitname}::git+https://github.com/LeMaker/RPi.GPIO_BP.git#branch=bananapi")
+md5sums=("SKIP")
+
+pkgver() {
+	cd "${srcdir}/${_gitname}"
+	echo "$(git log -1 --format="%cd" --date=short | sed "s/-//g").$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+}
+
+package_python-bpi-gpio-git() {
+	depends=("python")
+	makedepends=("git" "python-setuptools")
+	provides=("python-raspberry-gpio") 
+	conflicts=("python-raspberry-gpio")
+	replace=("python-raspberry-gpio")
+
+	cd "${srcdir}/${_gitname}"
+	python setup.py build
+	python setup.py install --prefix=/usr --root="${pkgdir}/" --optimize=1
+}
+
+package_python2-bpi-gpio-git() {
+	depends=("python2")
+	makedepends=("git" "python2-setuptools")
+	provides=("python2-raspberry-gpio") 
+	conflicts=("python2-raspberry-gpio")
+	replace=("python2-raspberry-gpio")
+
+	cd "${srcdir}/${_gitname}"
+	python2 setup.py build
+	python2 setup.py install --prefix=/usr --root="${pkgdir}/" --optimize=1
+}

@@ -1,2 +1,2 @@
-# arch_bananapi_PKGBUILDs
-arch_bananapi_PKGBUILDs
+# arch_sbc_PKGBUILDs
+arch_sbc_PKGBUILDs
