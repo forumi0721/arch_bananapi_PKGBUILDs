@@ -1,0 +1,13 @@
+#!/bin/sh
+
+SOURCETYPE="local"
+
+CheckUpdate() {
+	local version=$(curl -s http://apt.armbian.com/dists/jessie/main/binary-armhf/Packages | grep 'Filename: pool/main/l/linux-upstream/linux-image-sun8i_.*_armhf.deb' -B 2 | grep 'Provides\|Filename' | head -2)
+
+	local ver_1=$(grep 'Provides' <<< ${version} | sed 's/^.*Provides:.*linux-modules-\([^ ]*\)-sun8i.*$/\1/g')
+	local ver_2=$(grep 'Filename' <<< ${version} | sed 's@^.*Filename: pool/main/l/linux-upstream/linux-image-sun8i_\(.*\)_armhf.deb@\1@g')
+
+	sed -i -e "s/^_kernelversion=.*$/_kernelversion=${ver_1}/g" -e "s/^_armbianversion=.*$/_armbianversion=${ver_2}/g" PKGBUILD
+}
+

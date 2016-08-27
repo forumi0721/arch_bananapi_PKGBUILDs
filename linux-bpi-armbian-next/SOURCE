@@ -1,0 +1,13 @@
+#!/bin/sh
+
+SOURCETYPE="local"
+
+CheckUpdate() {
+	local version=$(curl -s http://apt.armbian.com/dists/jessie/main/binary-armhf/Packages | grep 'Filename: pool/main/l/linux-.*-sunxi/linux-image-next-sunxi_.*_armhf.deb' | sort | tail -1 | sed 's@Filename: pool/main/l/linux-\(.*\)-sunxi/linux-image-next-sunxi_\(.*\)_armhf.deb@\1:\2@g')
+
+	local ver_1=$(sed 's/\(.*\):\(.*\)/\1/g' <<< ${version})
+	local ver_2=$(sed 's/\(.*\):\(.*\)/\2/g' <<< ${version})
+
+	sed -i -e "s/^_kernelversion=.*$/_kernelversion=${ver_1}/g" -e "s/^_armbianversion=.*$/_armbianversion=${ver_2}/g" PKGBUILD
+}
+
