@@ -1,0 +1,16 @@
+# arg 1:  the new package version
+# arg 2:  the old package version
+
+KERNEL_VERSION=4.6.3-sunxi
+
+post_install () {
+  # updating module dependencies
+  echo ">>> Updating module dependencies. Please wait ..."
+  depmod ${KERNEL_VERSION}
+}
+
+post_upgrade() {
+  # updating module dependencies
+  echo ">>> Updating module dependencies. Please wait ..."
+  depmod ${KERNEL_VERSION}
+}

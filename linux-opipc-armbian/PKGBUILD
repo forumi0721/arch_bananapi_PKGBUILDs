@@ -1,0 +1,141 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+_kernelversion=3.4.112
+_armbianversion=5.16
+pkgname=("uboot-opipc-armbian" "linux-opipc-armbian" "linux-opipc-armbian-headers" "linux-opipc-armbian-firmware")
+pkgver=${_kernelversion}.${_armbianversion}
+pkgrel=1
+arch=("armv7h")
+url="http://www.armbian.com/"
+license=("GPL")
+makedepends=("sunxi-tools" "uboot-tools")
+options=("!strip" "libtool" "staticlibs")
+source=(
+	"linux-root.deb::http://apt.armbian.com/pool/main/l/linux-jessie-root-orangepipc/linux-jessie-root-orangepipc_${_armbianversion}_armhf.deb"
+	"linux-u-boot.deb::http://apt.armbian.com/pool/main/l/linux-u-boot-orangepipc-default/linux-u-boot-orangepipc_${_armbianversion}_armhf.deb"
+	"linux-image.deb::http://apt.armbian.com/pool/main/l/linux-upstream/linux-image-sun8i_${_armbianversion}_armhf.deb"
+	"linux-firmware-image.deb::http://apt.armbian.com/pool/main/l/linux-upstream/linux-firmware-image-sun8i_${_armbianversion}_armhf.deb"
+	"linux-headers.deb::http://apt.armbian.com/pool/main/l/linux-upstream/linux-headers-sun8i_${_armbianversion}_armhf.deb"
+	"uboot-opipc.tar.xz"
+	"linux-opipc.tar.xz"
+)
+noextract=(
+	"linux-root.deb"
+	"linux-u-boot.deb"
+	"linux-image.deb"
+	"linux-firmware-image.deb"
+	"linux-headers.deb"
+)
+md5sums=(
+	"SKIP"
+	"SKIP"
+	"SKIP"
+	"SKIP"
+	"SKIP"
+	"SKIP"
+	"SKIP"
+)
+
+prepare() {
+	cd ${srcdir}
+
+	for deb in *.deb
+	do
+		pushd . &> /dev/null
+		local subdir="${deb/.deb/}"
+		rm -rf "${subdir}"
+		mkdir "${subdir}"
+		cd "${subdir}"
+		ar p "../${deb}" data.tar.xz | bsdtar xf -
+		popd &> /dev/null
+	done
+}
+
+package_uboot-opipc-armbian() {
+	pkgdesc="U-Boot for OrangePi_PC (armbian)"
+	backup=("boot/boot.scr" "boot/boot.cmd")
+	depends=("sunxi-tools" "uboot-tools")
+	provides=("uboot-sunxi")
+	conflicts=("uboot-sunxi")
+	install="uboot-opipc.install"
+	
+	# bootloader
+	install -dm755 "${pkgdir}/boot"
+	install -Dm644 "${srcdir}/linux-u-boot/usr/lib/linux-u-boot-orangepipc_${_armbianversion}_armhf/u-boot-sunxi-with-spl.bin" "${pkgdir}/boot/"
+	install -Dm644 "${srcdir}/linux-root/boot/bin/orangepipc.bin" "${pkgdir}/boot/script.bin"
+	bin2fex "${srcdir}/linux-root/boot/bin/orangepipc.bin" > "${pkgdir}/boot/script.fex" 2> /dev/null
+
+	install -Dm644 "${srcdir}/uboot-opipc/boot.bmp" "${pkgdir}/boot/"
+	install -Dm644 "${srcdir}/uboot-opipc/boot.cmd" "${pkgdir}/boot/"
+	mkimage -C none -A arm -T script -d "${pkgdir}/boot/boot.cmd" "${pkgdir}/boot/boot.scr" &> /dev/null
+
+	touch "${pkgdir}/boot/.verbose"
+}
+
+package_linux-opipc-armbian() {
+	pkgdesc="The Linux Kernel and modules - OrangePi_PC (armbian)"
+	depends=("coreutils" "linux-opipc-armbian-firmware" "kmod")
+	provides=("linux")
+	conflicts=("linux")
+	install="linux-opipc.install"
+
+	# kernel
+	install -dm755 "${pkgdir}/boot"
+	install -Dm644 "${srcdir}/linux-image/boot/System.map-${_kernelversion}-sun8i" "${pkgdir}/boot/"
+	install -Dm644 "${srcdir}/linux-image/boot/System.map-${_kernelversion}-sun8i" "${pkgdir}/boot/System.map"
+	install -Dm644 "${srcdir}/linux-image/boot/config-${_kernelversion}-sun8i" "${pkgdir}/boot/"
+	install -Dm644 "${srcdir}/linux-image/boot/config-${_kernelversion}-sun8i" "${pkgdir}/boot/config"
+	install -Dm644 "${srcdir}/linux-image/boot/vmlinuz-${_kernelversion}-sun8i" "${pkgdir}/boot/"
+	install -Dm644 "${srcdir}/linux-image/boot/vmlinuz-${_kernelversion}-sun8i" "${pkgdir}/boot/vmlinuz"
+	install -Dm644 "${srcdir}/linux-image/boot/vmlinuz-${_kernelversion}-sun8i" "${pkgdir}/boot/zImage"
+	mkimage -A arm -O linux -T kernel -C none -a "0x40008000" -e "0x40008000" -n "Linux kernel" -d ${pkgdir}/boot/vmlinuz-${_kernelversion}-sun8i ${pkgdir}/boot/uImage &> /dev/null
+
+	# modules
+	install -dm755 "${pkgdir}/usr/lib/modules"
+	cp -ar "${srcdir}/linux-image/lib/modules/${_kernelversion}-sun8i" "${pkgdir}/usr/lib/modules/"
+
+	# modules - make room for external modules
+	ln -s "../extramodules-${_kernelversion%.*}-sun8i" "${pkgdir}/usr/lib/modules/${_kernelversion}-sun8i/extramodules"
+
+	# modules - add real version for building modules and running depmod from post_install/upgrade
+	mkdir -p "${pkgdir}/usr/lib/modules/extramodules-${_kernelversion%.*}-sun8i"
+	echo "${_kernelversion}" > "${pkgdir}/usr/lib/modules/extramodules-${_kernelversion%.*}-sun8i/version"
+
+	# extra - mali.conf
+	install -dm755 "${pkgdir}/etc/modules-load.d"
+	install -Dm644 "${srcdir}/linux-opipc/mali.conf" "${pkgdir}/etc/modules-load.d/"
+
+	# extra - rtl8192-blacklist.conf
+	install -dm755 "${pkgdir}/etc/modprobe.d"
+	install -Dm644 "${srcdir}/linux-opipc/rtl8192-blacklist.conf" "${pkgdir}/etc/modprobe.d/"
+
+	# extra - 50-mali.rules
+	install -dm755 "${pkgdir}/etc/udev/rules.d"
+	install -Dm644 "${srcdir}/linux-opipc/50-mali.rules" "${pkgdir}/etc/udev/rules.d/"
+
+	## modify install
+	sed -e "s/KERNEL_VERSION=.*/KERNEL_VERSION=${_kernelversion}-sun8i/g" -i "${startdir}/linux-opipc.install"
+}
+
+package_linux-opipc-armbian-headers() {
+	pkgdesc="Header files and scripts for building modules for linux kernel - OrangePi_PC (armbian)"
+	depends=("linux-opipc-armbian")
+	provides=("linux-headers=${_kernelversion}")
+	conflicts=("linux-headers")
+
+	install -dm755 "${pkgdir}/usr/src"
+	cp -ar "${srcdir}/linux-headers/usr/src/." "${pkgdir}/usr/src/"
+
+	install -dm755 "${pkgdir}/usr/lib/modules"
+	cp -ar "${srcdir}/linux-headers/lib/modules/." "${pkgdir}/usr/lib/modules/"
+}
+
+package_linux-opipc-armbian-firmware() {
+	pkgdesc="Firmware files for Linux - OrangePi_PC (armbian)"
+	provides=("linux-firmware=${_kernelversion}")
+	conflicts=("linux-firmware")
+
+	install -dm755 "${pkgdir}/usr/lib/firmware"
+	cp -ar "${srcdir}/linux-firmware-image/lib/firmware/." "${pkgdir}/usr/lib/firmware/"
+}
+

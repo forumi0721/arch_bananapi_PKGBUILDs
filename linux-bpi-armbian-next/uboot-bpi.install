@@ -1,0 +1,24 @@
+flash_uboot() {
+  echo "A new U-Boot version needs to be flashed onto /dev/mmcblk0."
+  echo "Do you want to do this now? [y|N]"
+  read -r shouldwe
+  if [[ $shouldwe =~ ^([yY][eE][sS]|[yY])$ ]]; then
+	dd if=/dev/zero of=/dev/mmcblk0 bs=1k count=1023 seek=1 status=noxfer > /dev/null 2>&1
+	dd if=/boot/u-boot-sunxi-with-spl.bin of=/dev/mmbclk0 bs=1024 seek=8 status=noxfer > /dev/null 2>&1
+  else
+    echo "You can do this later by running:"
+	echo dd if=/dev/zero of=/dev/mmcblk0 bs=1k count=1023 seek=1 status=noxfer
+	echo dd if=/boot/u-boot-sunxi-with-spl.bin of=/dev/mmbclk0 bs=1024 seek=8 status=noxfer
+  fi
+}
+
+## arg 1:  the new package version
+post_install() {
+  flash_uboot
+}
+
+## arg 1:  the new package version
+## arg 2:  the old package version
+post_upgrade() {
+  flash_uboot
+}

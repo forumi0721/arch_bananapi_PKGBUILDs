@@ -1,0 +1,145 @@
+# Maintainer: StoneCold <forumi0721[at]gmail[dot]com>
+
+_kernelversion=4.6.3
+_armbianversion=5.16
+pkgname=("uboot-bpi-armbian-next" "linux-bpi-armbian-next" "linux-bpi-armbian-next-headers" "linux-bpi-armbian-next-firmware")
+pkgver=${_kernelversion}.${_armbianversion}
+pkgrel=1
+arch=("armv7h")
+url="http://www.armbian.com/"
+license=("GPL")
+makedepends=("sunxi-tools" "uboot-tools")
+options=("!strip" "libtool" "staticlibs")
+source=(
+	"linux-root.deb::http://apt.armbian.com/pool/main/l/linux-jessie-root-next-bananapi/linux-jessie-root-next-bananapi_${_armbianversion}_armhf.deb"
+	"linux-u-boot.deb::http://apt.armbian.com/pool/main/l/linux-u-boot-bananapi-next/linux-u-boot-next-bananapi_${_armbianversion}_armhf.deb"
+	"linux-image.deb::http://apt.armbian.com/pool/main/l/linux-${_kernelversion}-sunxi/linux-image-next-sunxi_${_armbianversion}_armhf.deb"
+	"linux-dtb.deb::http://apt.armbian.com/pool/main/l/linux-${_kernelversion}-sunxi/linux-dtb-next-sunxi_${_armbianversion}_armhf.deb"
+	"linux-firmware-image.deb::http://apt.armbian.com/pool/main/l/linux-${_kernelversion}-sunxi/linux-firmware-image-next-sunxi_${_armbianversion}_armhf.deb"
+	"linux-headers.deb::http://apt.armbian.com/pool/main/l/linux-${_kernelversion}-sunxi/linux-headers-next-sunxi_${_armbianversion}_armhf.deb"
+	"uboot-bpi-armbian.tar.xz"
+	"linux-bpi-armbian.tar.xz"
+)
+noextract=(
+	"linux-root.deb"
+	"linux-u-boot.deb"
+	"linux-image.deb"
+	"linux-dtb.deb"
+	"linux-firmware-image.deb"
+	"linux-headers.deb"
+)
+md5sums=(
+	"SKIP"
+	"SKIP"
+	"SKIP"
+	"SKIP"
+	"SKIP"
+	"SKIP"
+	"SKIP"
+	"SKIP"
+)
+
+prepare() {
+	cd ${srcdir}
+
+	for deb in *.deb
+	do
+		pushd . &> /dev/null
+		local subdir="${deb/.deb/}"
+		rm -rf "${subdir}"
+		mkdir "${subdir}"
+		cd "${subdir}"
+		ar p "../${deb}" data.tar.xz | bsdtar xf -
+		popd &> /dev/null
+	done
+}
+
+package_uboot-bpi-armbian-next() {
+	pkgdesc="U-Boot for BananaPi (armbian next)"
+	backup=("boot/boot.scr" "boot/boot.cmd")
+	depends=("sunxi-tools" "uboot-tools")
+	provides=("uboot-sunxi" "uboot-bpi")
+	conflicts=("uboot-sunxi")
+	install="uboot-bpi.install"
+	
+	# bootloader
+	install -dm755 "${pkgdir}/boot"
+	install -Dm644 "${srcdir}/linux-u-boot/usr/lib/linux-u-boot-next-bananapi_${_armbianversion}_armhf/u-boot-sunxi-with-spl.bin" "${pkgdir}/boot/"
+	install -Dm644 "${srcdir}/linux-root/boot/bin/bananapi.bin" "${pkgdir}/boot/script.bin"
+	bin2fex "${pkgdir}/boot/script.bin" > "${pkgdir}/boot/script.fex" &> /dev/null
+
+	install -Dm644 "${srcdir}/uboot-bpi-armbian/boot.bmp" "${pkgdir}/boot/"
+	install -Dm644 "${srcdir}/uboot-bpi-armbian/boot.cmd" "${pkgdir}/boot/"
+	mkimage -C none -A arm -T script -d "${pkgdir}/boot/boot.cmd" "${pkgdir}/boot/boot.scr" &> /dev/null
+
+	install -dm755 "${pkgdir}/boot/dtb"
+	install -Dm644 "${srcdir}/linux-dtb/boot/dtb-${_kernelversion}-sunxi/sun7i-a20-bananapi.dtb" "${pkgdir}/boot/dtb/"
+}
+
+package_linux-bpi-armbian-next() {
+	pkgdesc="The Linux Kernel and modules - BananaPi (armbian next)"
+	depends=("coreutils" "linux-bpi-armbian-next-firmware" "kmod")
+	provides=("linux" "linux-bpi")
+	conflicts=("linux")
+	install="linux-bpi.install"
+
+	# kernel
+	install -dm755 "${pkgdir}/boot"
+	install -Dm644 "${srcdir}/linux-image/boot/System.map-${_kernelversion}-sunxi" "${pkgdir}/boot/"
+	install -Dm644 "${srcdir}/linux-image/boot/System.map-${_kernelversion}-sunxi" "${pkgdir}/boot/System.map"
+	install -Dm644 "${srcdir}/linux-image/boot/config-${_kernelversion}-sunxi" "${pkgdir}/boot/"
+	install -Dm644 "${srcdir}/linux-image/boot/config-${_kernelversion}-sunxi" "${pkgdir}/boot/config"
+	install -Dm644 "${srcdir}/linux-image/boot/vmlinuz-${_kernelversion}-sunxi" "${pkgdir}/boot/"
+	install -Dm644 "${srcdir}/linux-image/boot/vmlinuz-${_kernelversion}-sunxi" "${pkgdir}/boot/vmlinuz"
+	install -Dm644 "${srcdir}/linux-image/boot/vmlinuz-${_kernelversion}-sunxi" "${pkgdir}/boot/zImage"
+	mkimage -A arm -O linux -T kernel -C none -a "0x40008000" -e "0x40008000" -n "Linux kernel" -d ${pkgdir}/boot/vmlinuz-${_kernelversion}-sunxi ${pkgdir}/boot/uImage &> /dev/null
+
+	# modules
+	install -dm755 "${pkgdir}/usr/lib/modules"
+	cp -ar "${srcdir}/linux-image/lib/modules/${_kernelversion}-sunxi" "${pkgdir}/usr/lib/modules/"
+
+	# modules - make room for external modules
+	ln -s "../extramodules-${_kernelversion%.*}-sunxi" "${pkgdir}/usr/lib/modules/${_kernelversion}-sunxi/extramodules"
+
+	# modules - add real version for building modules and running depmod from post_install/upgrade
+	mkdir -p "${pkgdir}/usr/lib/modules/extramodules-${_kernelversion%.*}-sunxi"
+	echo "${_kernelversion}" > "${pkgdir}/usr/lib/modules/extramodules-${_kernelversion%.*}-sunxi/version"
+
+	# extra - mali.conf
+	install -dm755 "${pkgdir}/etc/modules-load.d"
+	install -Dm644 "${srcdir}/linux-bpi-armbian/mali.conf" "${pkgdir}/etc/modules-load.d/"
+
+	# extra - rtl8192-blacklist.conf
+	install -dm755 "${pkgdir}/etc/modprobe.d"
+	install -Dm644 "${srcdir}/linux-bpi-armbian/rtl8192-blacklist.conf" "${pkgdir}/etc/modprobe.d/"
+
+	# extra - 50-mali.rules
+	install -dm755 "${pkgdir}/etc/udev/rules.d"
+	install -Dm644 "${srcdir}/linux-bpi-armbian/50-mali.rules" "${pkgdir}/etc/udev/rules.d/"
+
+	## modify install
+	sed -e "s/KERNEL_VERSION=.*/KERNEL_VERSION=${_kernelversion}-sunxi/g" -i "${startdir}/linux-bpi.install"
+}
+
+package_linux-bpi-armbian-next-headers() {
+	pkgdesc="Header files and scripts for building modules for linux kernel - BananaPi (armbian next)"
+	depends=("linux-bpi-armbian-next")
+	provides=("linux-headers=${_kernelversion}" "linux-bpi-headers")
+	conflicts=("linux-headers")
+
+	install -dm755 "${pkgdir}/usr/src"
+	cp -ar "${srcdir}/linux-headers/usr/src/." "${pkgdir}/usr/src/"
+
+	install -dm755 "${pkgdir}/usr/lib/modules"
+	cp -ar "${srcdir}/linux-headers/lib/modules/." "${pkgdir}/usr/lib/modules/"
+}
+
+package_linux-bpi-armbian-next-firmware() {
+	pkgdesc="Firmware files for Linux - BananaPi (armbian next)"
+	provides=("linux-firmware=${_kernelversion}" "linux-bpi-firmware")
+	conflicts=("linux-firmware")
+
+	install -dm755 "${pkgdir}/usr/lib/firmware"
+	cp -ar "${srcdir}/linux-firmware-image/lib/firmware/." "${pkgdir}/usr/lib/firmware/"
+}
+
